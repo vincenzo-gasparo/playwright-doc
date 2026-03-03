@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/vincenzo-gasparo/playwright-doc/compare/v1.0.0...v1.0.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* publish npm package directly from release workflow ([fe54cef](https://github.com/vincenzo-gasparo/playwright-doc/commit/fe54cef91b9aefc35c84517a22c574d59121f455))
+
 # 1.0.0 (2026-03-03)
 
 

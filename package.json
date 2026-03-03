@@ -1,6 +1,6 @@
 {
   "name": "@blastoiseomg/playwright-doc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Playwright test file documentation generator",
   "repository": {
     "type": "git",
