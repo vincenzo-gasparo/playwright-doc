@@ -4,6 +4,9 @@ import type { DescribeBlock, FileDoc, TestEntry, TestStep } from './types';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+const escapeMarkdown = (text: string): string =>
+  text.replace(/([*_`~\[\]\\$])/g, '\\$1');
+
 const badge = (modifier: string | null): string =>
   modifier != null ? ` \`[${modifier}]\`` : '';
 
@@ -21,12 +24,12 @@ const quoteLine = (depth: number, content: string): string => {
 
 const renderSteps = (steps: readonly TestStep[], depth: number): string[] =>
   steps.flatMap(step => [
-    `${indent(depth)}- step: ${step.name}`,
+    `${indent(depth)}- step: ${escapeMarkdown(step.name)}`,
     ...renderSteps(step.steps, depth + 1),
   ]);
 
 const renderTest = (test: TestEntry): string[] => [
-  `- **test**: ${test.name}${badge(test.modifier)} *(line ${test.line})*`,
+  `- **test**: ${escapeMarkdown(test.name)}${badge(test.modifier)} \`(line ${test.line})\``,
   ...renderSteps(test.steps, 1),
 ];
 
@@ -61,7 +64,7 @@ const renderDescribe = (
   const qd = quoteDepth + 1;
   const heading = '#'.repeat(Math.min(headingDepth + 3, 6));
   return [
-    quoteLine(qd, `${heading} describe: ${describe.name}${badge(describe.modifier)}`),
+    quoteLine(qd, `${heading} describe: ${escapeMarkdown(describe.name)}${badge(describe.modifier)}`),
     quoteLine(qd, ''),
     ...renderChildren(describe.describes, describe.tests, headingDepth + 1, qd),
   ];

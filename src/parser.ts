@@ -20,6 +20,14 @@ import type {
 const getStringLiteral = (node: ts.Node): O.Option<string> => {
   if (ts.isStringLiteral(node)) return O.some(node.text);
   if (ts.isNoSubstitutionTemplateLiteral(node)) return O.some(node.text);
+  if (ts.isTemplateExpression(node)) {
+    let text = node.head.text;
+    for (const span of node.templateSpans) {
+      text += '${' + span.expression.getText() + '}';
+      text += span.literal.text;
+    }
+    return O.some(text);
+  }
   return O.none;
 };
 

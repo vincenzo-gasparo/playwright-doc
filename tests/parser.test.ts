@@ -95,6 +95,23 @@ describe('parseFile', () => {
     expect(doc.describes).toHaveLength(0);
   });
 
+  it('parses template literals with interpolations', async () => {
+    const result = await run(fixture('template-literals.spec.ts'));
+    expect(E.isRight(result)).toBe(true);
+    if (!E.isRight(result)) return;
+
+    const doc = result.right;
+    expect(doc.describes).toHaveLength(1);
+    expect(doc.describes[0].name).toBe('group for ${item}');
+    expect(doc.describes[0].tests).toHaveLength(1);
+    expect(doc.describes[0].tests[0].name).toBe('should handle ${item}');
+    expect(doc.describes[0].tests[0].steps).toHaveLength(1);
+    expect(doc.describes[0].tests[0].steps[0].name).toBe('step with ${item}');
+
+    expect(doc.tests).toHaveLength(1);
+    expect(doc.tests[0].name).toBe('top-level test for ${item}');
+  });
+
   it('returns Left with FileReadError for missing file', async () => {
     const result = await run(fixture('nonexistent.spec.ts'));
     expect(E.isLeft(result)).toBe(true);

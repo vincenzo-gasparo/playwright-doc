@@ -14,7 +14,7 @@ describe('formatMarkdown', () => {
     expect(md).toContain('# Test Documentation');
     expect(md).toContain('## tests/example.spec.ts');
     expect(md).toContain('**test**: my test');
-    expect(md).toContain('*(line 5)*');
+    expect(md).toContain('`(line 5)`');
   });
 
   it('renders modifier badges', () => {
