@@ -1,0 +1,26 @@
+{
+  "name": "playwright-doc",
+  "version": "1.0.0",
+  "description": "Playwright test file documentation generator",
+  "bin": {
+    "playwright-doc": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node --transpile-only src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "fast-glob": "^3.3.2",
+    "fp-ts": "^2.16.9",
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "ts-node": "^10.9.2",
+    "vitest": "^4.0.18"
+  }
+}
