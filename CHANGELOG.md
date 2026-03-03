@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/vincenzo-gasparo/playwright-doc/compare/v1.0.0...v1.1.0) (2026-03-03)
+
+
+### Bug Fixes
+
+* support template literals and escape markdown special characters ([d14732f](https://github.com/vincenzo-gasparo/playwright-doc/commit/d14732f4401cf137cd2d2511ce7fe55b5b4672f4))
+
+
+### Features
+
+* add --outdir option for per-file output with preserved directory structure ([6074b9e](https://github.com/vincenzo-gasparo/playwright-doc/commit/6074b9e8216ba31f11435d36dc75cfde18419bf7))
+
 # 1.0.0 (2026-03-03)
 
 
