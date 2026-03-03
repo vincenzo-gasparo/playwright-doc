@@ -121,3 +121,8 @@ export const formatYaml = (docs: readonly FileDoc[], rootDir: string): string =>
   docs.length === 0
     ? ''
     : docs.map(doc => renderFile(doc, rootDir).join('\n')).join('\n\n') + '\n';
+
+export const formatYamlSingle = (doc: FileDoc, rootDir: string): string => {
+  const lines = renderFile(doc, rootDir);
+  return lines.length === 0 ? '' : lines.join('\n') + '\n';
+};

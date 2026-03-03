@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatYaml } from '../src/formatter-yaml';
+import { formatYaml, formatYamlSingle } from '../src/formatter-yaml';
 import type { FileDoc } from '../src/types';
 
 describe('formatYaml', () => {
@@ -216,6 +216,53 @@ describe('formatYaml', () => {
     expect(formatYaml(docs, '/project')).toBe(
       'a.spec.ts:\n' +
       '  empty group: []\n',
+    );
+  });
+});
+
+describe('formatYamlSingle', () => {
+  it('renders a single file doc', () => {
+    const doc: FileDoc = {
+      path: '/project/tests/example.spec.ts',
+      describes: [],
+      tests: [{ name: 'my test', modifier: null, line: 5, steps: [] }],
+    };
+
+    expect(formatYamlSingle(doc, '/project')).toBe(
+      'tests/example.spec.ts:\n' +
+      '  - my test\n',
+    );
+  });
+
+  it('returns empty string for empty doc', () => {
+    const doc: FileDoc = {
+      path: '/project/empty.spec.ts',
+      describes: [],
+      tests: [],
+    };
+
+    // renderFile still produces output for empty files (key: [])
+    const result = formatYamlSingle(doc, '/project');
+    expect(result).toBe('empty.spec.ts: []\n');
+  });
+
+  it('renders describes with tests', () => {
+    const doc: FileDoc = {
+      path: '/project/auth.spec.ts',
+      describes: [{
+        name: 'Auth',
+        modifier: null,
+        line: 1,
+        describes: [],
+        tests: [{ name: 'logs in', modifier: null, line: 2, steps: [] }],
+      }],
+      tests: [],
+    };
+
+    expect(formatYamlSingle(doc, '/project')).toBe(
+      'auth.spec.ts:\n' +
+      '  Auth:\n' +
+      '    - logs in\n',
     );
   });
 });

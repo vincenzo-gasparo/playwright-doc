@@ -77,7 +77,17 @@ const renderFile = (doc: FileDoc, rootDir: string): string => {
   return lines.join('\n');
 };
 
+const renderFileSingle = (doc: FileDoc, rootDir: string): string => {
+  const rel = path.relative(rootDir, doc.path);
+  const lines: string[] = [`# ${rel}`, ''];
+  lines.push(...renderChildren(doc.describes, doc.tests, -1, 0));
+  return lines.join('\n');
+};
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export const formatMarkdown = (docs: readonly FileDoc[], rootDir: string): string =>
   ['# Test Documentation', '', ...docs.map(doc => renderFile(doc, rootDir))].join('\n');
+
+export const formatMarkdownSingle = (doc: FileDoc, rootDir: string): string =>
+  renderFileSingle(doc, rootDir);

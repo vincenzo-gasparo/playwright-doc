@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatMarkdown } from '../src/formatter';
+import { formatMarkdown, formatMarkdownSingle } from '../src/formatter';
 import type { FileDoc } from '../src/types';
 
 describe('formatMarkdown', () => {
@@ -102,5 +102,72 @@ describe('formatMarkdown', () => {
     const md = formatMarkdown([], '/project');
     expect(md).toContain('# Test Documentation');
     expect(md.trim()).toBe('# Test Documentation');
+  });
+});
+
+describe('formatMarkdownSingle', () => {
+  it('uses h1 for the file path instead of h2', () => {
+    const doc: FileDoc = {
+      path: '/project/tests/example.spec.ts',
+      describes: [],
+      tests: [{ name: 'my test', modifier: null, line: 5, steps: [] }],
+    };
+
+    const md = formatMarkdownSingle(doc, '/project');
+    expect(md).toContain('# tests/example.spec.ts');
+    expect(md).not.toContain('## tests/example.spec.ts');
+  });
+
+  it('does not include "Test Documentation" header', () => {
+    const doc: FileDoc = {
+      path: '/project/a.spec.ts',
+      describes: [],
+      tests: [{ name: 'a test', modifier: null, line: 1, steps: [] }],
+    };
+
+    const md = formatMarkdownSingle(doc, '/project');
+    expect(md).not.toContain('Test Documentation');
+  });
+
+  it('renders describes at h2 depth instead of h3', () => {
+    const doc: FileDoc = {
+      path: '/project/nested.spec.ts',
+      describes: [{
+        name: 'outer',
+        modifier: null,
+        line: 1,
+        describes: [{
+          name: 'inner',
+          modifier: null,
+          line: 5,
+          describes: [],
+          tests: [{ name: 'deep', modifier: null, line: 6, steps: [] }],
+        }],
+        tests: [],
+      }],
+      tests: [],
+    };
+
+    const md = formatMarkdownSingle(doc, '/project');
+    expect(md).toContain('> ## describe: outer');
+    expect(md).toContain('> > ### describe: inner');
+  });
+
+  it('renders tests and steps correctly', () => {
+    const doc: FileDoc = {
+      path: '/project/steps.spec.ts',
+      describes: [],
+      tests: [{
+        name: 'with steps',
+        modifier: 'skip',
+        line: 3,
+        steps: [{ name: 'do something', steps: [] }],
+      }],
+    };
+
+    const md = formatMarkdownSingle(doc, '/project');
+    expect(md).toContain('**test**: with steps');
+    expect(md).toContain('`[skip]`');
+    expect(md).toContain('- step: do something');
   });
 });

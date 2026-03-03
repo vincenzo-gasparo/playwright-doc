@@ -38,6 +38,12 @@ playwright-doc generate "tests/**/*.spec.ts" --format yaml
 # Short flag
 playwright-doc generate "tests/**/*.spec.ts" -f yaml -o docs/tests.yaml
 
+# Write one file per source file, preserving directory structure
+playwright-doc generate "tests/**/*.spec.ts" --outdir docs/
+
+# Per-file YAML output
+playwright-doc generate "tests/**/*.spec.ts" -d docs/ -f yaml
+
 # Use a custom working directory
 playwright-doc generate "**/*.spec.ts" --cwd ./packages/app
 ```

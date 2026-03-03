@@ -11,8 +11,9 @@ import path from 'path';
 import { Command } from 'commander';
 
 import { findFiles } from './files';
-import { formatMarkdown } from './formatter';
-import { formatYaml } from './formatter-yaml';
+import { formatMarkdown, formatMarkdownSingle } from './formatter';
+import { formatYaml, formatYamlSingle } from './formatter-yaml';
+import { deriveOutputPath } from './output';
 import { parseFile } from './parser';
 import type { FileDoc, ParseError } from './types';
 
@@ -60,6 +61,27 @@ const writeOutput = (
       )
     : TE.fromIO(() => { process.stdout.write(markdown + '\n'); });
 
+type OutputEntry = { readonly filePath: string; readonly content: string };
+
+const writeOneFile = (entry: OutputEntry): TE.TaskEither<ParseError, void> =>
+  TE.tryCatch(
+    async () => {
+      const resolved = path.resolve(entry.filePath);
+      await fs.mkdir(path.dirname(resolved), { recursive: true });
+      await fs.writeFile(resolved, entry.content, 'utf-8');
+    },
+    (e): ParseError => ({ tag: 'OutputError', path: entry.filePath, cause: e as Error }),
+  );
+
+const writeOutputDir = (
+  entries: readonly OutputEntry[],
+): TE.TaskEither<ParseError, void> =>
+  pipe(
+    entries,
+    RA.traverse(TE.ApplicativePar)(writeOneFile),
+    TE.map(() => undefined),
+  );
+
 // ── CLI ───────────────────────────────────────────────────────────────────────
 
 const program = new Command();
@@ -74,10 +96,19 @@ program
   .description('Scan test files and output documentation')
   .argument('<pattern>', 'Glob pattern to match test files (e.g. "tests/**/*.spec.ts")')
   .option('-o, --output <file>', 'Write output to file instead of stdout')
+  .option('-d, --outdir <dir>', 'Write one file per source file into directory (mutually exclusive with -o)')
   .option('-f, --format <type>', 'Output format: markdown or yaml', 'markdown')
   .option('--cwd <dir>', 'Working directory for glob resolution', process.cwd())
-  .action(async (pattern: string, opts: { output?: string; format: string; cwd: string }) => {
-    const task = pipe(
+  .action(async (pattern: string, opts: { output?: string; outdir?: string; format: string; cwd: string }) => {
+    if (opts.output != null && opts.outdir != null) {
+      console.error('Error: --output and --outdir are mutually exclusive');
+      process.exit(1);
+    }
+
+    const isYaml = opts.format === 'yaml';
+    const ext = isYaml ? '.yaml' : '.md';
+
+    const parseDocs = pipe(
       findFiles(pattern, opts.cwd),
       TE.chainFirst(files =>
         TE.fromIO(() => { console.error(`Found ${files.length} file(s)…`); })
@@ -94,13 +125,32 @@ program
 
         return TE.right(docs);
       }),
-      TE.map(docs =>
-        opts.format === 'yaml'
-          ? formatYaml(docs, opts.cwd)
-          : formatMarkdown(docs, opts.cwd),
-      ),
-      TE.chain(markdown => writeOutput(markdown, opts.output)),
     );
+
+    const task = opts.outdir != null
+      ? pipe(
+          parseDocs,
+          TE.map(docs =>
+            docs
+              .filter(doc => doc.tests.length > 0 || doc.describes.length > 0)
+              .map(doc => ({
+                filePath: deriveOutputPath(doc.path, opts.cwd, opts.outdir!, ext),
+                content: isYaml
+                  ? formatYamlSingle(doc, opts.cwd)
+                  : formatMarkdownSingle(doc, opts.cwd),
+              })),
+          ),
+          TE.chain(writeOutputDir),
+        )
+      : pipe(
+          parseDocs,
+          TE.map(docs =>
+            isYaml
+              ? formatYaml(docs, opts.cwd)
+              : formatMarkdown(docs, opts.cwd),
+          ),
+          TE.chain(content => writeOutput(content, opts.output)),
+        );
 
     const result = await task();
 
@@ -109,7 +159,9 @@ program
       process.exit(1);
     }
 
-    if (opts.output) {
+    if (opts.outdir) {
+      console.error(`Documentation written to ${opts.outdir}/`);
+    } else if (opts.output) {
       console.error(`Documentation written to ${opts.output}`);
     }
   });
