@@ -1,16 +1,28 @@
 {
-  "name": "playwright-doc",
-  "version": "1.0.0",
+  "name": "@blastoiseomg/playwright-doc",
+  "version": "0.0.0",
   "description": "Playwright test file documentation generator",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vincenzo-gasparo/playwright-doc.git"
+  },
   "bin": {
     "playwright-doc": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsc",
     "dev": "ts-node --transpile-only src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepare": "husky"
   },
   "dependencies": {
     "commander": "^12.1.0",
@@ -19,7 +31,10 @@
     "typescript": "^5.5.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
     "@types/node": "^22.0.0",
+    "husky": "^9.1.7",
     "ts-node": "^10.9.2",
     "vitest": "^4.0.18"
   }

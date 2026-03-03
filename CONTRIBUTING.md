@@ -60,6 +60,34 @@ tests/
   files.test.ts
 ```
 
+## Commit messages
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/). A husky hook validates every commit message automatically.
+
+**Format:** `<type>(<optional scope>): <description>`
+
+| Type       | When to use                              |
+|------------|------------------------------------------|
+| `feat`     | A new feature                            |
+| `fix`      | A bug fix                                |
+| `docs`     | Documentation only changes               |
+| `refactor` | Code change that neither fixes nor adds  |
+| `test`     | Adding or updating tests                 |
+| `chore`    | Build process, tooling, dependencies     |
+
+**Examples:**
+
+```
+feat: add YAML output format
+fix: handle empty describe blocks without crashing
+docs: add commit conventions to CONTRIBUTING
+refactor(parser): extract helper for nested describes
+test: add fixture for tagged tests
+chore: bump vitest to v4
+```
+
+A commit with `BREAKING CHANGE:` in the footer (or `!` after the type) triggers a major version bump.
+
 ## Pull requests
 
 1. Create a feature branch from `main`
