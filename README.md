@@ -17,10 +17,10 @@ A CLI tool that generates structured Markdown documentation from Playwright test
 
 ```bash
 # Install globally
-npm install -g cli-parser
+npm install -g @blastoiseomg/playwright-doc
 
 # Or run directly with npx
-npx cli-parser generate "tests/**/*.spec.ts"
+npx @blastoiseomg/playwright-doc generate "tests/**/*.spec.ts"
 ```
 
 ## Usage
