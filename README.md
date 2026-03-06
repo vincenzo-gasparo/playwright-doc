@@ -57,12 +57,12 @@ playwright-doc generate "**/*.spec.ts" --cwd ./packages/app
 
 > ### describe: Authentication
 >
-> - **test**: should log in *(line 8)*
+> - **test**: should log in `(line 8)`
 >   - step: Fill username
 >   - step: Fill password
 >   - step: Click submit
 >
-> - **test**: should reject bad credentials `[fail]` *(line 20)*
+> - **test**: should reject bad credentials `[fail]` `(line 20)`
 ```
 
 ### YAML output (`--format yaml`)
