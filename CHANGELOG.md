@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/vincenzo-gasparo/playwright-doc/compare/v1.1.0...v1.1.1) (2026-03-06)
+
+
+### Bug Fixes
+
+* correct line number format in README sample output ([d1243a0](https://github.com/vincenzo-gasparo/playwright-doc/commit/d1243a0b2d575d461580a1a8519ca493b20c28c7))
+
 # [1.1.0](https://github.com/vincenzo-gasparo/playwright-doc/compare/v1.0.0...v1.1.0) (2026-03-03)
 
 
